@@ -47,7 +47,8 @@ const router = createRouter({
               path: "list",
               name: "articleList",
               meta: { name: "文章列表" },
-              component: () => import("@/views/console/article/ArticleList.vue"),
+              component: () =>
+                import("@/views/console/article/articleList/ArticleList.vue"),
             },
             {
               path: "edit",

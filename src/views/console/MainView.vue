@@ -1,6 +1,9 @@
 <template>
   <div class="common-layout">
     <div class="aside">
+      <div class="logo" @click="handleLogoClick">
+        <span>SX</span>
+      </div>
       <ul>
         <li class="add-btn" @click="handleAddClick">
           +
@@ -10,9 +13,12 @@
           <img class="icon" :src="activeIndex == index ? item.activeIconPath : item.iconPath" alt="">
         </li>
       </ul>
+      <div class="logout">
+        <img src="@/assets/icon/logout.svg" alt="logout">
+      </div>
     </div>
 
-    <div class="main">
+    <div class="console">
       <router-view v-slot="{ Component }">
         <KeepAlive exclude="EditArticle">
           <Component :is="Component" :key="route.name"></Component>
@@ -32,7 +38,7 @@ import activeTodoIcon from "@/assets/icon/tab-active/todo.svg";
 import activeArticleIcon from "@/assets/icon/tab-active/article.svg";
 import activeFileIcon from "@/assets/icon/tab-active/file.svg";
 
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 const router = useRouter();
 const route = useRoute();
@@ -43,28 +49,29 @@ const menuList = ref([
     iconPath: homeIcon,
     activeIconPath: activeHomeIcon,
     index: 0,
-    url: '/main/home'
+    url: '/console/home'
   },
   {
     iconPath: todoIcon,
     activeIconPath: activeTodoIcon,
     index: 1,
-    url: '/main/todo'
+    url: '/console/todo'
   },
   {
     iconPath: articleIcon,
     activeIconPath: activeArticleIcon,
     index: 2,
-    url: '/main/article/list'
+    url: '/console/article/list'
   },
   {
     iconPath: fileIcon,
     activeIconPath: activeFileIcon,
     index: 3,
-    url: '/main/file'
+    url: '/console/file'
   },
 ])
 let activeIndex = ref(0)
+
 const setActive = (index: number) => {
   if (activeIndex.value != index) {
     activeIndex.value = index
@@ -72,12 +79,25 @@ const setActive = (index: number) => {
   }
 }
 const handleAddClick = () => {
-  router.push("/main/article/edit");
+  router.push("/console/article/edit");
   activeIndex.value = 2
 }
+const handleLogoClick = () => {
+  router.push("/console/home");
+  activeIndex.value = 0;
+}
+
+// Watch for route changes to update activeIndex
+watch(route, (newRoute) => {
+  const currentPath = newRoute.path;
+  const activeItem = menuList.value.find(item => currentPath.startsWith(item.url));
+  if (activeItem) {
+    activeIndex.value = activeItem.index;
+  }
+}, { immediate: true });
 
 window.onbeforeunload = (e: any) => {
-  if (route.path == "/main/article/editArticle") {
+  if (route.path == "/console/article/editArticle") {
     e = e || window.event;
     // 兼容IE8和Firefox 4之前的版本
     if (e) {
@@ -105,7 +125,17 @@ window.onbeforeunload = (e: any) => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    position: relative;
 
+    .logo {
+      position: absolute;
+      top: 16px;
+
+      span {
+        font-size: 20px;
+        user-select: none;
+      }
+    }
 
     ul {
       width: 100%;
@@ -120,13 +150,14 @@ window.onbeforeunload = (e: any) => {
         cursor: pointer;
         transition: all 0.3s;
 
-        &:not(.add-btn):hover {
-          // transform: scale(1.4);
+
+        &:active{
+          transform: scale(0.95);
         }
       }
 
       .active {
-        transform: scale(1.4);
+        transform: scale(1.1);
       }
 
 
@@ -152,9 +183,19 @@ window.onbeforeunload = (e: any) => {
         height: 18px;
       }
     }
+
+    .logout {
+      position: absolute;
+      bottom: 12px;
+
+      img {
+        width: 18px;
+        height: 18px;
+      }
+    }
   }
 
-  .main {
+  .console {
     flex: 1;
   }
 }

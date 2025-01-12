@@ -25,9 +25,7 @@ body {
     padding: 0;
     font-size: 14px;
     font-family: 'josefin-sans', sans-serif;
-    /* background: linear-gradient(to top right, #dff6ff, #f8fdff);
-     */
-    background-color: var(----primary-bg-color);
+    background-color: #eceff7;
 }
 
 a {

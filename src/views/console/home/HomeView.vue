@@ -5,79 +5,86 @@
  * @Description: Do not edit
 -->
 <template>
-    <div class="header">
-        <div class="left">
-            <div class="title">
-                Goods morning,Lumoyoo
+    <div class="container">
+        <div class="header">
+            <div class="left">
+                <div class="title">
+                    Goods morning,Lumoyoo
+                </div>
+                <div class="subtitle">
+                    Rise and shine! Have a great day.
+                </div>
             </div>
-            <div class="subtitle">
-                Rise and shine! Have a great day.
-            </div>
-        </div>
-        <div class="middle">
-            <ul>
-                <li v-for="item in canlendar" :class="{active: item.active}">{{ item.label }}</li>
-            </ul>
-        </div>
-        <div class="right">
-            <img src="@/assets/icon/dark.svg" alt="">
-            <img src="@/assets/icon/message.svg" alt="">
-            <img src="http://lvmaoya.cn:8520/assets/cartoon.d6562f6b.jpg" alt="">
-        </div>
-    </div>
-    <div class="body">
-        <div class="left">
-            <div class="top">
+            <div class="middle">
                 <ul>
-                    <li v-for="item in data">
-                        <img src="@/assets/icon/brawse.svg" alt="">
-                        <div>
-                            <div class="title">
-                                <span>{{ item.title }}</span>
-                                <span>{{ item.unit }}</span>
-                            </div>
-                            <div class="desc">
-                                <span :style="{ color: item.color }">
-                                    {{ item.rate }}
-                                </span>
-                                <div class="chart">
-                                    <MiniLineChart :data="item.data" :lineColor="item.color"></MiniLineChart>
-                                </div>
-                            </div>
-                        </div>
+                    <li v-for="(item, index) in canlendar" :class="{ active: item.active }"
+                        @click="handleDateRangeClick(index)">{{ item.label
+                        }}</li>
+                    <li>
+                        <img src="@/assets/icon/calendar.svg" alt="">
                     </li>
                 </ul>
             </div>
-            <div class="middle main-card">
-                <LineChart :option="chartOption" />
-            </div>
-            <div class="bottom main-card">
-                <div class="main-title">
-                    Portfolio
-                </div>
+            <div class="right">
+                <img src="@/assets/icon/dark.svg" alt="">
+                <img src="@/assets/icon/message.svg" alt="">
+                <img src="http://lvmaoya.cn:8520/assets/cartoon.d6562f6b.jpg" alt="">
             </div>
         </div>
-        <div class="middle">
-            <div class="top main-card">
-                <div class="main-title">
-                    Analysis
+        <div class="body">
+            <div class="left">
+                <div class="top">
+                    <ul>
+                        <li v-for="item in data">
+                            <img src="@/assets/icon/brawse.svg" alt="">
+                            <div>
+                                <div class="title">
+                                    <span>{{ item.title }}</span>
+                                    <span>{{ item.unit }}</span>
+                                </div>
+                                <div class="desc">
+                                    <span :style="{ color: item.color }">
+                                        {{ item.rate }}
+                                    </span>
+                                    <div class="chart">
+                                        <MiniLineChart :data="item.data" :lineColor="item.color"></MiniLineChart>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="middle main-card">
+                    <LineChart :option="chartOption" />
+                </div>
+                <div class="bottom main-card">
+                    <div class="main-title">
+                        Portfolio
+                    </div>
                 </div>
             </div>
-            <div class="bottom main-card">
-                <div class="main-title">
-                    Projections
+            <div class="middle">
+                <div class="top main-card">
+                    <div class="main-title">
+                        Analysis
+                    </div>
+                </div>
+                <div class="bottom main-card">
+                    <div class="main-title">
+                        Projections
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="right">
-            <div class="top main-card">
-                <div class="main-title">
-                    Analysis
+            <div class="right">
+                <div class="top main-card">
+                    <div class="main-title">
+                        Analysis
+                    </div>
                 </div>
-            </div>
-            <div class="bottom main-card">
-                <div class="main-title">
-                    Projections
+                <div class="bottom main-card">
+                    <div class="main-title">
+                        Projections
+                    </div>
                 </div>
             </div>
         </div>
@@ -119,13 +126,6 @@ const data = ref([
         "rate": "-25.12",
         "color": "green",
         "data": [[0, 18], [100, 5], [200, 10], [300, 12], [400, 8]]
-    },
-    {
-        "title": 12345,
-        "unit": "USDT",
-        "rate": "-25.12",
-        "color": "green",
-        "data": [[0, 18], [100, 5], [200, 10], [300, 12], [400, 8]]
     }
 ])
 const canlendar = ref([
@@ -148,6 +148,10 @@ const canlendar = ref([
 ])
 function getRandomData() {
     return Math.floor(Math.random() * 10);
+}
+const handleDateRangeClick = (index: number) => {
+    canlendar.value.forEach(item => item.active = false)
+    canlendar.value[index].active = true
 }
 const dataset = {
     source: [
@@ -243,153 +247,184 @@ const chartOption = ref({
     padding: 16px;
 }
 
-.header {
+.container {
+    height: 100%;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 12px 0 12px;
-    height: 68px;
-
-    .left {
-        display: flex;
-        flex-direction: column;
-        row-gap: 2px;
-
-        .title {
-            font-size: 24px;
-        }
-
-        .subtitle {
-            color: #545454;
-        }
-    }
-    .middle{
-        ul{
-            display: flex;
-            li{
-                padding: 8px 12px;
-                border-radius: 8px;
-                color: #545454;
-                &.active{
-                    background-color: #68d0fd;
-                    color: white;
-                }
-            }
-        }
-    }
-    .right {
+    flex-direction: column;
+    gap: 12px;
+    .header {
         display: flex;
         align-items: center;
-        column-gap: 20px;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 12px 0 12px;
+        height: 10%;
+        max-height: 90px;
 
-        img {
-            width: 16px;
-            height: 16px;
+        .left {
+            display: flex;
+            flex-direction: column;
+            row-gap: 2px;
 
-
-            &:last-child {
-                width: 40px;
-                height: 40px;
-                margin-bottom: 8px;
-                border-radius: 50%;
+            .title {
+                font-size: 24px;
             }
-        }
-    }
-}
 
-.body {
-    display: flex;
-    gap: 12px;
-    padding: 12px;
-    height: calc(100vh - 80px);
-
-    .left {
-        width: 55%;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;  
-        .top {
-            ul {
-                display: flex;
-                gap: 12px;
-                overflow-x: scroll;
-                &::-webkit-scrollbar{
-                    width: 0;
-                    height: 0;
-                }
-                li {
-                    display: flex;
-                    padding: 10px;
-                    align-items: center;
-                    gap: 8px;
-                    background-color: white;
-                    border-radius: 12px;
-
-                    img {
-                        width: 36px;
-                    }
-
-                    &>div {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 4px;
-
-                        .title {
-                            font-weight: bold;
-                            font-size: 16px;
-
-                            span:last-child {
-                                font-size: 10px;
-                                color: #545454;
-                                margin-left: 5px;
-                            }
-                        }
-
-                        .desc {
-                            display: flex;
-                            align-items: center;
-                            gap: 8px;
-                            font-size: 10px;
-                            color: red;
-
-                            .chart {
-                                width: 60px;
-                                height: 12px;
-                            }
-                        }
-                    }
-                }
+            .subtitle {
+                color: #545454;
             }
         }
 
         .middle {
-            flex: 1;
+            ul {
+                display: flex;
+                gap: 8px;
+
+                li {
+                    padding: 0 12px;
+                    height: 28px;
+                    border-radius: 8px;
+                    color: #545454;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    user-select: none;
+
+                    &.active {
+                        background-color: #68d0fd;
+                        color: white;
+                        font-weight: 500;
+                    }
+
+                    img {
+                        height: 70%;
+                    }
+                }
+
+            }
         }
 
-        .bottom {
-            flex: 1;
+        .right {
+            display: flex;
+            align-items: center;
+            column-gap: 20px;
+
+            img {
+                width: 16px;
+                height: 16px;
+
+
+                &:last-child {
+                    width: 40px;
+                    height: 40px;
+                    margin-bottom: 8px;
+                    border-radius: 50%;
+                }
+            }
         }
     }
 
-    &>.middle {
-        width: calc(22.5% - 12px);
+    .body {
         display: flex;
-        flex-direction: column;
         gap: 12px;
-        .top,.bottom{
+        padding: 0 12px 12px 12px;
+        flex: 1;
+        .left {
+            width: 56%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            .top {
+                height: 12%;
+                width: 100%;
+
+                ul {
+                    display: flex;
+                    gap: 12px;
+                    height: 100%;
+                    width: 100%;
+
+                    li {
+                        display: flex;
+                        padding: 10px;
+                        align-items: center;
+                        gap: 8px;
+                        background-color: white;
+                        border-radius: 12px;
+                        flex: 1;
+
+                        img {
+                            width: 40px;
+                        }
+
+                        &>div {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 4px;
+
+                            .title {
+                                font-weight: bold;
+                                font-size: 16px;
+
+                                span:last-child {
+                                    font-size: 10px;
+                                    color: #545454;
+                                    margin-left: 5px;
+                                }
+                            }
+
+                            .desc {
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+                                font-size: 10px;
+                                color: red;
+
+                                .chart {
+                                    width: 60px;
+                                    height: 12px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            .middle {
+                flex: 1;
+            }
+
+            .bottom {
+                flex: 1;
+            }
+        }
+
+        &>.middle {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            .top,
+            .bottom {
+                flex: 1;
+            }
         }
-    }
-    &>.right {
-        width: calc(22.5% - 12px);
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        .top{
-            height: 70%;
-        }
-        .bottom{
-            height: calc(30% - 12px);
+
+        &>.right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            .top {
+                height: 70%;
+            }
+
+            .bottom {
+                flex: 1;
+            }
         }
     }
 }

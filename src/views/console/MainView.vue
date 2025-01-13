@@ -8,9 +8,9 @@
         <li class="add-btn" @click="handleAddClick">
           +
         </li>
-        <li v-for="(item, index) in menuList" :key="index" :class="{ active: activeIndex === index }"
+        <li v-for="(item, index) in menuList" :key="index" :class="{ active: item.active }"
           @click="setActive(index)">
-          <img class="icon" :src="activeIndex == index ? item.activeIconPath : item.iconPath" alt="">
+          <img class="icon" :src="item.active ? item.activeIconPath : item.iconPath" alt="">
         </li>
       </ul>
       <div class="logout">
@@ -49,42 +49,49 @@ const menuList = ref([
     iconPath: homeIcon,
     activeIconPath: activeHomeIcon,
     index: 0,
-    url: '/console/home'
+    url: '/console/home',
+    active: true
   },
   {
     iconPath: todoIcon,
     activeIconPath: activeTodoIcon,
     index: 1,
-    url: '/console/todo'
+    url: '/console/todo',
+    active: false
   },
   {
     iconPath: articleIcon,
     activeIconPath: activeArticleIcon,
     index: 2,
-    url: '/console/article/list'
+    url: '/console/article/list',
+    active: false
   },
   {
     iconPath: fileIcon,
     activeIconPath: activeFileIcon,
     index: 3,
-    url: '/console/file'
+    url: '/console/file',
+    active: false
   },
 ])
-let activeIndex = ref(0)
 
 const setActive = (index: number) => {
-  if (activeIndex.value != index) {
-    activeIndex.value = index
+  let activeIndex = menuList.value.find(item => item.active)?.index
+  if (activeIndex != index) {
+    menuList.value.forEach(item => item.active = false)
+    menuList.value[index].active = true
     router.push(menuList.value[index].url);
   }
 }
 const handleAddClick = () => {
   router.push("/console/article/edit");
-  activeIndex.value = 2
+  menuList.value.forEach(item => item.active = false)
+  menuList.value[2].active = true
 }
 const handleLogoClick = () => {
   router.push("/console/home");
-  activeIndex.value = 0;
+  menuList.value.forEach(item => item.active = false)
+  menuList.value[0].active = true
 }
 
 // Watch for route changes to update activeIndex
@@ -92,7 +99,8 @@ watch(route, (newRoute) => {
   const currentPath = newRoute.path;
   const activeItem = menuList.value.find(item => currentPath.startsWith(item.url));
   if (activeItem) {
-    activeIndex.value = activeItem.index;
+    menuList.value.forEach(item => item.active = false)
+    menuList.value[activeItem.index].active = true
   }
 }, { immediate: true });
 
@@ -129,10 +137,19 @@ window.onbeforeunload = (e: any) => {
 
     .logo {
       position: absolute;
-      top: 16px;
+      top: 0px;
+      height: 10%;
+      width: 100%;
+      max-height: 90px;
+      padding-top: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
       span {
         font-size: 20px;
+        font-weight: 600;
+        display: block;
         user-select: none;
       }
     }
@@ -186,8 +203,15 @@ window.onbeforeunload = (e: any) => {
 
     .logout {
       position: absolute;
-      bottom: 12px;
-
+      bottom: 0px;
+      height: 10%;
+      width: 100%;
+      max-height: 90px;
+      padding-bottom: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
       img {
         width: 18px;
         height: 18px;

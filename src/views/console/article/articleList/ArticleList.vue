@@ -108,23 +108,34 @@
                         </ul>
                     </li>
                 </ul>
-            </div>
-            <div class="footer">
-                <div class="left"></div>
-                <div class="middle"></div>
-                <div class="right"></div>
+                <div class="table-footer">
+                    <div class="left">
+                        <span>+</span>
+                        <span>Previous</span>
+                    </div>
+                    <div class="middle">
+                        <ul>
+                            <li>1</li>
+                            <li>2</li>
+                            <li>3</li>
+                            <li>...</li>
+                            <li>8</li>
+                            <li>9</li>
+                            <li>10</li>
+                        </ul>
+                    </div>
+                    <div class="right">
+                        <span>Next</span>
+                        <span>+</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import MiniLineChart from "@/components/miniLineChart/index.vue";
-import LineChart from '@/components/lineChart/index.vue';
-
-import { color } from "echarts";
 import { ref } from "vue";
-const miniLineData = ref([[0, 10], [100, 8], [200, 12], [300, 15], [400, 10]])
 const articleCategory = ref([
     {
         "name": "All Articles",
@@ -349,8 +360,6 @@ const setActive = (index: number) => {
         articleCategory.value[index].active = true
     }
 }
-
-
 </script>
 
 <style scoped lang="scss">
@@ -366,7 +375,8 @@ const setActive = (index: number) => {
 }
 
 .container {
-    height: 100%;
+    height: 100vh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -420,8 +430,10 @@ const setActive = (index: number) => {
         gap: 12px;
         padding: 0 12px 12px 12px;
         flex: 1;
+        overflow: hidden;
+
         &>.top {
-            height: 8%;
+            height: 40px;
             width: 100%;
             display: flex;
             align-items: center;
@@ -493,7 +505,7 @@ const setActive = (index: number) => {
         }
 
         &>.middle {
-            height: 8%;
+            height: 40px;
             width: 100%;
             // background-color: red;
             display: flex;
@@ -539,10 +551,11 @@ const setActive = (index: number) => {
 
         &>.bottom {
             flex: 1;
-            background-color: red;
             border-radius: 8px;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+            background-color: white;
 
             .table-header {
                 background-color: #f9f8fa;
@@ -562,10 +575,10 @@ const setActive = (index: number) => {
             .table-body {
                 display: flex;
                 flex-direction: column;
-                background-color: white;
                 gap: 4px;
                 flex: 1;
                 overflow-y: scroll;
+
                 li {
                     ul {
                         display: flex;
@@ -584,12 +597,44 @@ const setActive = (index: number) => {
                 }
             }
 
-        }
+            .table-footer {
+                height: 40px;
+                width: 100%;
+                border-top: 1px solid #ddd;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 12px;
+                // background-color: white;
+                border-radius: 0 0 8px 8px;
+                .left{
+                    display: flex;
+                    gap: 4px;
+                    border: 1px solid #ddd;
+                    height: 25px;
+                    line-height: 25px;
+                    padding: 0 10px;
+                    border-radius: 4px;
+                }
+                .right{
+                    display: flex;
+                    gap: 4px;
+                    border: 1px solid #ddd;
+                    height: 25px;
+                    line-height: 25px;
+                    padding: 0 10px;
+                    border-radius: 4px;
+                }
+                ul{
+                    display: flex;
+                    li{
+                        height: 30px;
+                        width: 30px;
+                        line-height: 30px;
+                    }
+                }
+            }
 
-        &>.footer {
-            height: 8%;
-            width: 100%;
-            background-color: red;
         }
     }
 }

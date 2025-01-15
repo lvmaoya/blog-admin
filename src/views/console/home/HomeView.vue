@@ -253,6 +253,8 @@ const chartOption = ref({
     display: flex;
     flex-direction: column;
     gap: 12px;
+    background-color: #eceff7;
+
     .header {
         display: flex;
         align-items: center;

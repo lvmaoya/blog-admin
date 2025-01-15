@@ -221,6 +221,8 @@ window.onbeforeunload = (e: any) => {
 
   .console {
     flex: 1;
+    border-radius: 24px 0 0 24px;
+    overflow: hidden;
   }
 }
 </style>

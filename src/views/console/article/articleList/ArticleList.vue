@@ -380,6 +380,7 @@ const setActive = (index: number) => {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    background-color: #eceff7;
 
     .header {
         display: flex;

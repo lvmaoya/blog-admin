@@ -1,4 +1,4 @@
-import request from "@/service/request"
+import { post } from "./apiService";
 
 export interface UserLoginParams {
   username: string;
@@ -6,6 +6,23 @@ export interface UserLoginParams {
   captcha: string
 }
 
-export function login(data: UserLoginParams) {
-  return request.post("/login",data);
+export interface User {
+  id: number;
+  name: string;
+  nickName: string;
+  email: string;
+  mobile: string;
+  otherContact: string;
+  introduce: string;
+  avatar: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserLoginResponseData {
+  token: string;
+  user: User;
+}
+export async function login(data: UserLoginParams) {
+  return await post<UserLoginResponseData, UserLoginParams>("/login", data);
 }

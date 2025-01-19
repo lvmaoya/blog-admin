@@ -46,10 +46,10 @@
       <div id="editor">
       </div>
     </div>
-    <div class="right">
+    <div class="right" v-show="isAiIframeShow">
       <input type="text">
       <div class="frame">
-        <iframe style="width: 100%; height: 100%;" :src="aiIframeSrc"></iframe>
+        <iframe style="width: 100%; height: 100%;" :src="aiIframeSrc[currentAiFrameIndex]"></iframe>
       </div>
     </div>
   </div>
@@ -62,8 +62,9 @@ import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import "@/assets/css/editor.css"
 import { onMounted, ref } from "vue";
-const aiIframeSrc = ref("https://www.doubao.com/chat/807464071024642");
-
+const aiIframeSrc = ref(["https://www.doubao.com/chat/807464071024642", "https://yiyan.baidu.com/"]);
+const isAiIframeShow = ref(false)
+const currentAiFrameIndex = ref(0)
 onMounted(() => {
   const quill = new Quill('#editor', {
     theme: 'snow',
@@ -75,7 +76,7 @@ onMounted(() => {
 })
 
 const handleAIClick = () => {
-
+  isAiIframeShow.value = !isAiIframeShow.value
 };
 </script>
 
@@ -118,18 +119,23 @@ const handleAIClick = () => {
       }
     }
   }
-  .right{
+
+  .right {
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    // padding: 20px;
     background-color: #999;
-    flex: 1;
+    border-left: 1px solid #999;
+    width: 50%;
     margin: 20px;
     border-radius: 20px;
-    .frame{
-      flex: 1;
+
+    .frame {
+      width: 100%;
+      height: 100%;
       overflow: hidden;
-      iframe{
+
+      iframe {
         border: none;
       }
     }

@@ -91,19 +91,15 @@ const getCodeData = async () => {
 const submitForm = async () => {
   try {
     const loginRes = await login(formData);
-    const token = loginRes.data.token;
+    const token = loginRes.token;
     cache.setCache("token", token);
-    cache.setCache("user", loginRes.data.user);
-    let loginSuccessUrl = (route.query.redirect as string) || "/main/home";
+    cache.setCache("user", loginRes.user);
+    let loginSuccessUrl = (route.query.redirect as string) || "/console/home";
     router.replace({
       path: loginSuccessUrl,
     });
   } catch (error: any) {
     console.error(error);
-    // ElMessage({
-    //   message: error.response?.data ?? error.message,
-    //   type: "error",
-    // });
   }
 };
 // 游客登录

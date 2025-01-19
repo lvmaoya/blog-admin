@@ -80,7 +80,7 @@
                         <li>Comments</li>
                     </ul>
                 </div>
-                <ul class="table-body">
+                <ul class="table-body"  v-loading="tableDataLoading">
                     <li v-for="item in articleList">
                         <ul>
                             <li><input type="checkbox"></li>
@@ -91,19 +91,19 @@
                                 {{ item.title }}
                             </li>
                             <li>
-                                {{ item.author }}
+                                {{ item.description }}
                             </li>
                             <li>
-                                {{ item.publishDate }}
+                                {{ item.publishedTime }}
                             </li>
                             <li>
-                                {{ item.views }}
+                                {{ item.pageView }}
                             </li>
                             <li>
-                                {{ item.likes }}
+                                {{ item.preferNum }}
                             </li>
                             <li>
-                                {{ item.comments }}
+                                {{ item.status }}
                             </li>
                         </ul>
                     </li>
@@ -135,7 +135,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { articleListData } from "@/service/article";
+import { type BlogRecord } from "@/service/article";
 const articleCategory = ref([
     {
         "name": "All Articles",
@@ -162,204 +164,24 @@ const articleCategory = ref([
         "index": 3
     },
 ])
-const articleList = [
-    {
-        id: 1,
-        title: '探索人工智能在医疗领域的应用',
-        author: '赵科研',
-        publishDate: '2025 - 05 - 15',
-        views: 1200,
-        likes: 200,
-        comments: 50
-    },
-    {
-        id: 2,
-        title: '新型材料如何改变未来建筑格局',
-        author: '钱工',
-        publishDate: '2025 - 06 - 20',
-        views: 900,
-        likes: 120,
-        comments: 30
-    },
-    {
-        id: 3,
-        title: '解读最新教育政策对学生发展的影响',
-        author: '孙老师',
-        publishDate: '2025 - 07 - 10',
-        views: 1500,
-        likes: 250,
-        comments: 60
-    },
-    {
-        id: 4,
-        title: '旅游攻略：小众景点的独特魅力',
-        author: '李驴友',
-        publishDate: '2025 - 08 - 05',
-        views: 2000,
-        likes: 300,
-        comments: 80
-    },
-    {
-        id: 5,
-        title: '美食之旅：地方特色小吃大揭秘',
-        author: '周大厨',
-        publishDate: '2025 - 09 - 22',
-        views: 1800,
-        likes: 280,
-        comments: 70
-    },
-    {
-        id: 6,
-        title: '职场晋升秘籍：如何脱颖而出',
-        author: '吴经理',
-        publishDate: '2025 - 10 - 18',
-        views: 1600,
-        likes: 220,
-        comments: 55
-    },
-    {
-        id: 7,
-        title: '科技前沿：量子计算的突破与展望',
-        author: '郑博士',
-        publishDate: '2025 - 11 - 03',
-        views: 1100,
-        likes: 180,
-        comments: 40
-    },
-    {
-        id: 1,
-        title: '探索人工智能在医疗领域的应用',
-        author: '赵科研',
-        publishDate: '2025 - 05 - 15',
-        views: 1200,
-        likes: 200,
-        comments: 50
-    },
-    {
-        id: 2,
-        title: '新型材料如何改变未来建筑格局',
-        author: '钱工',
-        publishDate: '2025 - 06 - 20',
-        views: 900,
-        likes: 120,
-        comments: 30
-    },
-    {
-        id: 3,
-        title: '解读最新教育政策对学生发展的影响',
-        author: '孙老师',
-        publishDate: '2025 - 07 - 10',
-        views: 1500,
-        likes: 250,
-        comments: 60
-    },
-    {
-        id: 4,
-        title: '旅游攻略：小众景点的独特魅力',
-        author: '李驴友',
-        publishDate: '2025 - 08 - 05',
-        views: 2000,
-        likes: 300,
-        comments: 80
-    },
-    {
-        id: 5,
-        title: '美食之旅：地方特色小吃大揭秘',
-        author: '周大厨',
-        publishDate: '2025 - 09 - 22',
-        views: 1800,
-        likes: 280,
-        comments: 70
-    },
-    {
-        id: 6,
-        title: '职场晋升秘籍：如何脱颖而出',
-        author: '吴经理',
-        publishDate: '2025 - 10 - 18',
-        views: 1600,
-        likes: 220,
-        comments: 55
-    },
-    {
-        id: 7,
-        title: '科技前沿：量子计算的突破与展望',
-        author: '郑博士',
-        publishDate: '2025 - 11 - 03',
-        views: 1100,
-        likes: 180,
-        comments: 40
-    },
-    {
-        id: 1,
-        title: '探索人工智能在医疗领域的应用',
-        author: '赵科研',
-        publishDate: '2025 - 05 - 15',
-        views: 1200,
-        likes: 200,
-        comments: 50
-    },
-    {
-        id: 2,
-        title: '新型材料如何改变未来建筑格局',
-        author: '钱工',
-        publishDate: '2025 - 06 - 20',
-        views: 900,
-        likes: 120,
-        comments: 30
-    },
-    {
-        id: 3,
-        title: '解读最新教育政策对学生发展的影响',
-        author: '孙老师',
-        publishDate: '2025 - 07 - 10',
-        views: 1500,
-        likes: 250,
-        comments: 60
-    },
-    {
-        id: 4,
-        title: '旅游攻略：小众景点的独特魅力',
-        author: '李驴友',
-        publishDate: '2025 - 08 - 05',
-        views: 2000,
-        likes: 300,
-        comments: 80
-    },
-    {
-        id: 5,
-        title: '美食之旅：地方特色小吃大揭秘',
-        author: '周大厨',
-        publishDate: '2025 - 09 - 22',
-        views: 1800,
-        likes: 280,
-        comments: 70
-    },
-    {
-        id: 6,
-        title: '职场晋升秘籍：如何脱颖而出',
-        author: '吴经理',
-        publishDate: '2025 - 10 - 18',
-        views: 1600,
-        likes: 220,
-        comments: 55
-    },
-    {
-        id: 7,
-        title: '科技前沿：量子计算的突破与展望',
-        author: '郑博士',
-        publishDate: '2025 - 11 - 03',
-        views: 1100,
-        likes: 180,
-        comments: 40
-    }
-];
-const setActive = (index: number) => {
+const articleList = ref<Array<BlogRecord>>([]);
+const setActive = (index:number) => {
     let activeIndex = articleCategory.value.find(item => item.active)?.index
     if (activeIndex != index) {
         articleCategory.value.forEach(item => item.active = false)
         articleCategory.value[index].active = true
     }
 }
+const getArticleList = async () => {
+    tableDataLoading.value = true
+    let res = await articleListData({ page: 1, size: 20 });    
+    articleList.value = res.records
+    tableDataLoading.value = false
+}
+const tableDataLoading = ref(false)
+onMounted(()=>{
+    getArticleList()
+})
 </script>
 
 <style scoped lang="scss">
@@ -579,14 +401,14 @@ const setActive = (index: number) => {
                 gap: 4px;
                 flex: 1;
                 overflow-y: scroll;
-
+                position: relative;
                 li {
                     ul {
                         display: flex;
-
                         li {
-                            width: 12.5%;
+                            width:12.5%;
                             height: 40px;
+                            padding: 0 8px;
                             display: flex;
                             align-items: center;
                             justify-content: center;
@@ -608,7 +430,8 @@ const setActive = (index: number) => {
                 padding: 0 12px;
                 // background-color: white;
                 border-radius: 0 0 8px 8px;
-                .left{
+
+                .left {
                     display: flex;
                     gap: 4px;
                     border: 1px solid #ddd;
@@ -617,7 +440,8 @@ const setActive = (index: number) => {
                     padding: 0 10px;
                     border-radius: 4px;
                 }
-                .right{
+
+                .right {
                     display: flex;
                     gap: 4px;
                     border: 1px solid #ddd;
@@ -626,9 +450,11 @@ const setActive = (index: number) => {
                     padding: 0 10px;
                     border-radius: 4px;
                 }
-                ul{
+
+                ul {
                     display: flex;
-                    li{
+
+                    li {
                         height: 30px;
                         width: 30px;
                         line-height: 30px;

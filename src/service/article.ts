@@ -1,168 +1,53 @@
-import { haveAuthority } from "@/utils/authority";
-import sjRequestObj from ".";
-export interface IDataType<T = any> {
-  code: Number;
-  message: String;
-  data: T;
-}
-export interface articleDataType<T> {
-  total: number;
-  list: Array<T>;
-}
-interface getArticleConfigType {
-  pageSize: Number;
-  currentPage: Number;
-  status?: Number;
-}
-export interface articleType {
-  article_id: String;
-  title: String;
-  description?: String;
-  category_id?: String;
-  father_category_id?: Number;
-  cover_image?: String;
-  pageview?: Number;
-  prefer_num?: Number;
-  is_privacy?: Number;
+import { post } from "./apiService";
 
-  status: Number;
-  deleted_time?: String;
-  published_time?: String;
-  draft_time?: String;
-  author?: String;
+export interface Category {
+  id: string;
+  categoryName: string;
+  fatherCategoryName: string;
+  deleted: number;
+  createdTime: string;
+  updatedTime: string;
 }
-export interface deleteArticleConfigType {
-  id: number;
-}
-export interface getArticleDataConfigType {
-  id: number;
-}
-export interface getArticleResType {
-  article_id: number;
+
+export interface BlogRecord {
+  id: string;
   title: string;
-  author: string;
-  category: Array<number>;
-  cover_image: string;
   description: string;
-  is_privacy: boolean;
+  category?: Category | null;
+  categoryId: string;
+  fatherCategoryId: string;
+  coverImage: string;
+  content: string | null;
+  pageView: number;
+  preferNum: number;
   status: number;
-  content: string;
-  published_time: string;
-  draft_time: string;
-}
-export interface changeArticleStatusConfigType {
-  id: number;
-  toStatus: Number;
-}
-export interface uploadImgResType {
-  url: string;
-}
-interface searchArticleConfigType {
-  title: String;
-  keywords: String;
-  category: String;
-  published_time: String;
-  status: String;
-
-  pageSize: Number;
-  currentPage: Number;
-}
-interface addArticleConfig {
-  title: String;
-  author: String;
-  cover_image: String;
-  category: Array<string>;
-  content: String;
-  description: String;
-  status: Number;
-  is_privacy: Number;
-  draft_time?: String;
-  published_time?: String;
-}
-export interface categoryDataType<T> {
-  categoryList: Array<T>;
-}
-export interface uploadImageRes {
-  url: string;
+  privacy: number;
+  authorId: string;
+  top: number;
+  deleted: number;
+  publishedTime: string;
+  updatedTime: string | null;
 }
 
-// 获取文章列表
-export function getArticleListData(getArticleConfig: getArticleConfigType) {
-  return sjRequestObj.post<IDataType<articleDataType<articleType>>>({
-    url: "/getArticleList",
-    data: getArticleConfig,
-  });
+export interface BlogListResponseData {
+  records: BlogRecord[];
+  total: number;
+  size: number;
+  current: number;
+  pages: number;
 }
-// 彻底删除
-export function deleteArticle(config: deleteArticleConfigType) {
-  if (!haveAuthority()) {
-    return;
-  }
-  return sjRequestObj.delete<IDataType<Object>>({
-    url: "/deleteArticle",
-    data: config,
-  });
+export interface BlogListSearchParams {
+    page?: number;
+    size?: number;
+    title?: string;
+    keywords?: string;
+    category?: string;
+    sortBy?: string;
+    status?: string;
+    publishedStart?: string;
+    publishedEnd?: string;
 }
-// 假删除文章
-export function changeArticleStatus(config: changeArticleStatusConfigType) {
-  if (!haveAuthority()) {
-    return;
-  }
-  return sjRequestObj.patch<IDataType<Object>>({
-    url: "/changeArticleStatus",
-    data: config,
-  });
-}
-// 搜索文章
-export function searchArticle(config: searchArticleConfigType) {
-  return sjRequestObj.post<IDataType<articleDataType<articleType>>>({
-    url: "/searchBackArticle",
-    data: config,
-  });
-}
-// 获取到上传到七牛云的token
-export function getUploadToken() {
-  return sjRequestObj.get<IDataType<string>>({
-    url: "/uploadToken",
-  });
-}
-// 增加文章
-export function addArticle(config: addArticleConfig) {
-  if (!haveAuthority()) {
-    return;
-  }
-  return sjRequestObj.post<IDataType<String>>({
-    url: "/addArticle",
-    data: config,
-  });
-}
-// 获取文章类别
-export function getCategoryData() {
-  return sjRequestObj.get<IDataType<categoryDataType<Object>>>({
-    url: "/getCategoryListData",
-  });
-}
-// 上传图片
-export function uploadImage(file: any) {
-  return sjRequestObj.post<IDataType<uploadImageRes>>({
-    url: "/uploadImg",
-    data: file,
-  });
-}
-// 发布更新
-export function updateArticle(config: addArticleConfig) {
-  if (!haveAuthority()) {
-    return;
-  }
-  return sjRequestObj.post<IDataType<String>>({
-    url: "/updateArticle",
-    data: config,
-  });
-}
-// 获取文章数据用于回显
-export function getArticleData(config: getArticleDataConfigType) {
-  return sjRequestObj.post<IDataType<getArticleResType>>({
-    url: "/getArticleData",
-    data: config,
-  });
+
+export async function articleListData(data: BlogListSearchParams) {
+  return await post<BlogListResponseData, BlogListSearchParams>("/blog/list", data);
 }

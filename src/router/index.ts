@@ -114,8 +114,7 @@ router.beforeEach((to, from, next) => {
   // 如果不是login，判断是否有token，当是/console 的时候，跳转到/console/home
   if (to.path !== "/login") {
     const token = cache.getCache("token");
-    const _token = cache.getCache("_token");
-    if (!_token && !token) {
+    if (!token) {
       next({
         path: "/login",
       });

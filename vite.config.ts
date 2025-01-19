@@ -11,19 +11,17 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-  // server: {
-  //   port: 4000, // 设置服务启动端口号
-  //   open: true, // 设置服务启动时是否自动打开浏览器
-  //   cors: true, // 允许跨域
-
-  //   // 设置代理，根据我们项目实际情况配置
-  //   proxy: {
-  //     "/apiTest": {
-  //       //apiTest是自行设置的请求前缀，按照这个来匹配请求，有这个字段的请求，就会进到代理来
-  //       target: "http://xxx/api",
-  //       changeOrigin: true, //是否跨域
-  //       rewrite: (path) => path.replace("/apiTest", ""),
-  //     },
-  //   },
-  // },
+  server: {
+    port: 3000,
+    open: true, // 设置服务启动时是否自动打开浏览器
+    cors: true, // 允许跨域
+    // proxy: {
+    //   // 代理所有以 /api 开头的请求到目标服务器
+    //   '/api': {
+    //     target: 'http://localhost:8080', // 目标服务器的地址
+    //     changeOrigin: true,
+    //     rewrite: (path) => path.replace(/^\/api/, '') // 去掉 /api 前缀
+    //   }
+    // }
+  },
 });

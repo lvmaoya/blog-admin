@@ -4,7 +4,6 @@ import type { AxiosInstance, AxiosRequestConfig } from "axios";
 // import { JSEncrypt } from "JSEncrypt";
 
 import axios from "axios";
-import { ElLoading, ElMessage } from "element-plus";
 
 
 class Request {

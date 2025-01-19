@@ -53,6 +53,8 @@ import "@/assets/css/reset.css";
 import "animate.css";
 
 const app = createApp(App);
+import Loading from '@/components/loading/index'
+app.use(Loading)
 
 app.use(store);
 

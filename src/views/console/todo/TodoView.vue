@@ -5,11 +5,22 @@
  * @Description: Do not edit
 -->
 <template>
-    todo
+    <div>
+       todo管理 施工中...
+    </div>
 </template>
 
 <script setup lang="ts">
 
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: #eceff7;
+    font-weight: 600;
+}
+</style>

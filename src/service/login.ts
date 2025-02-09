@@ -1,4 +1,4 @@
-import { post } from "./apiService";
+import { get, post } from "./apiService";
 
 export interface UserLoginParams {
   username: string;
@@ -25,4 +25,7 @@ export interface UserLoginResponseData {
 }
 export async function login(data: UserLoginParams) {
   return await post<UserLoginResponseData, UserLoginParams>("/login", data);
+}
+export async function logout() {
+  return await get("/logout");
 }

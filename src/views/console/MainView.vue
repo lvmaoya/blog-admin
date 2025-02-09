@@ -13,7 +13,7 @@
           <img class="icon" :src="item.active ? item.activeIconPath : item.iconPath" alt="">
         </li>
       </ul>
-      <div class="logout">
+      <div class="logout" @click="handleLogoutClick">
         <img src="@/assets/icon/logout.svg" alt="logout">
       </div>
     </div>
@@ -40,6 +40,8 @@ import activeFileIcon from "@/assets/icon/tab-active/file.svg";
 
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { logout } from "@/service/login";
+import cache from "@/utils/cache";
 const router = useRouter();
 const route = useRoute();
 
@@ -53,17 +55,17 @@ const menuList = ref([
     active: true
   },
   {
-    iconPath: todoIcon,
-    activeIconPath: activeTodoIcon,
+    iconPath: articleIcon,
+    activeIconPath: activeArticleIcon,
     index: 1,
-    url: '/console/todo',
+    url: '/console/article/list',
     active: false
   },
   {
-    iconPath: articleIcon,
-    activeIconPath: activeArticleIcon,
+    iconPath: todoIcon,
+    activeIconPath: activeTodoIcon,
     index: 2,
-    url: '/console/article/list',
+    url: '/console/todo',
     active: false
   },
   {
@@ -103,7 +105,11 @@ watch(route, (newRoute) => {
     menuList.value[activeItem.index].active = true
   }
 }, { immediate: true });
-
+const handleLogoutClick = async()=>{
+  await logout();
+  cache.deleteCache("token")
+  router.push("/login");
+}
 window.onbeforeunload = (e: any) => {
   if (route.path == "/console/article/editArticle") {
     e = e || window.event;

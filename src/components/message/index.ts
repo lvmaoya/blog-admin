@@ -4,12 +4,13 @@ import { createVNode, render } from 'vue'
 //导出对象，对象里面必须要有install方法，才能使用app.use()
 export default {
     //插件访问
-    install(app) {
+    install(app:any) {
         //创建虚拟dom
         const Vnode = createVNode(Message);
         //将Message挂载在body下
         render(Vnode, document.body);
         //添加全局property，供全局访问
+        //@ts-ignore
         app.config.globalProperties.$message = Vnode.component.exposed.handlerShow
     },
 
@@ -23,6 +24,7 @@ export default {
         //将vm挂载在body下
         render(vm, document.body);
         //调用组件
+        //@ts-ignore
         vm.component.exposed.handlerShow({type,duration,text})
     }
 

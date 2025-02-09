@@ -66,7 +66,7 @@ const aiIframeSrc = ref(["https://www.doubao.com/chat/807464071024642", "https:/
 const isAiIframeShow = ref(false)
 const currentAiFrameIndex = ref(0)
 onMounted(() => {
-  const quill = new Quill('#editor', {
+  new Quill('#editor', {
     theme: 'snow',
     placeholder: "输入 / 以选择输入类型",
     modules: {
@@ -163,6 +163,9 @@ const handleAIClick = () => {
     color: #999;
   }
 
+  .ql-toolbar.ql-snow .ql-picker-label {
+    border: none;
+  }
   .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label {
     border: none;
   }
@@ -185,8 +188,9 @@ const handleAIClick = () => {
 
   .ql-toolbar.ql-snow .ql-picker-options {
     border: 0px solid transparent;
-    box-shadow: none;
+    /* box-shadow: none; */
     border-radius: 8px;
+    top: 150%;
   }
 }
 </style>

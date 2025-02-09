@@ -1,3 +1,4 @@
+import router from '@/router';
 import cache from '@/utils/cache';
 import axios from 'axios';
 
@@ -24,6 +25,9 @@ instance.interceptors.request.use(
     (config) => {
         // 可以在这里添加 token 等请求头信息
         const token = cache.getCache('token');
+        if (!token) {
+            router.replace("/login")
+        }
         if (token && config.headers) {
             config.headers.Authorization = token;
         }

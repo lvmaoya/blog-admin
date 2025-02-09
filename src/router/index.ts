@@ -110,13 +110,13 @@ const router = createRouter({
   ],
 });
 router.beforeEach((to, from, next) => {
-  // 如果路径是login，接着登录。
-  // 如果不是login，判断是否有token，当是/console 的时候，跳转到/console/home
   if (to.path !== "/login") {
     const token = cache.getCache("token");
     if (!token) {
+      
       next({
         path: "/login",
+        replace: true
       });
       // 游客登录
     } else {
@@ -127,10 +127,6 @@ router.beforeEach((to, from, next) => {
       } else {
         next();
       }
-      // {
-      //   path: "/login",
-      //   query: { redirect: to.fullPath },
-      // }
     }
   } else {
     next();

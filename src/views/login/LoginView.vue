@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <div class="login-content">
+    <div class="login-content" v-loading="loading">
       <div class="picture">
       </div>
       <div class="login-form">
@@ -31,7 +31,7 @@
             </div>
           </div>
           <div class="captcha">
-            <input type="text" placeholder="" maxlength="4" v-model="formData.captcha">
+            <input type="text" placeholder="" maxlength="4" v-model="formData.captcha" @keypress.enter="submitForm">
             <div class="placeholder" data-placeholder="Captcha"></div>
             <div>
               <img :src="authCodeUrl" @click="getCodeData">
@@ -53,13 +53,12 @@
 
 <script setup lang="ts">
 import { login, type UserLoginParams } from "@/service/login";
-import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
-// import { ElMessage, type FormInstance, type FormRules } from "element-plus";
+import { onMounted, reactive, ref } from "vue";
 import cache from "@/utils/cache";
-import { useRouter, useRoute, onBeforeRouteLeave } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { BASE_URL } from "@/service/request/config";
 import axios, { AxiosError } from 'axios';
-
+import Message from '@/components/message/index';
 
 const router = useRouter();
 const route = useRoute();
@@ -87,9 +86,12 @@ const getCodeData = async () => {
   );
   authCodeUrl.value = `data:image/png;base64,${base64}`;
 };
+const loading = ref(false)
 // 提交登录
 const submitForm = async () => {
+  loading.value = true;
   try {
+
     const loginRes = await login(formData);
     const token = loginRes.token;
     cache.setCache("token", token);
@@ -98,8 +100,20 @@ const submitForm = async () => {
     router.replace({
       path: loginSuccessUrl,
     });
+    Message.service({
+      type: 'success',
+      text: "登录成功",
+      duration: 3000
+    })
   } catch (error: any) {
+    Message.service({
+      type: 'error',
+      text: error.message,
+      duration: 3000
+    })
     console.error(error);
+  } finally {
+    loading.value = false;
   }
 };
 // 游客登录
@@ -110,19 +124,10 @@ const visitorLogin = () => {
   });
 };
 
-
-const keyEvent = (e: any) => {
-  if (e.code === "Enter") {
-
-  }
-};
 onMounted(() => {
   getCodeData();
-  document.addEventListener("keyup", keyEvent);
 });
-onBeforeUnmount(() => {
-  document.removeEventListener("keyup", keyEvent);
-});
+
 </script>
 
 <style scoped lang="scss">

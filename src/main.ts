@@ -44,16 +44,19 @@ hljs.registerLanguage("dart", dart);
 VMdPreview.use(githubTheme, {
   Hljs: hljs,
 });
-
+import 'animate.css';
 import App from "./App.vue";
 import router from "./router";
 import store from "@/stores";
 import "@/assets/css/reset.css";
 // animate动画
 import "animate.css";
+import Message from '@/components/message/index';
 
 const app = createApp(App);
 import Loading from '@/components/loading/index'
+app.use(Message)
+
 app.use(Loading)
 
 app.use(store);

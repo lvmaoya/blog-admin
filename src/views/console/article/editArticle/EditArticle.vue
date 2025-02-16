@@ -9,7 +9,7 @@
     <div class="middle">
       <div class="main-container">
         <div
-          class="editor-container editor-container_document-editor editor-container_include-minimap editor-container_include-style"
+          class="editor-container editor-container_document-editor editor-container_include-minimap editor-container_include-style editor-container_include-word-count"
           ref="editorContainerElement">
           <div class="editor-container__menu-bar" ref="editorMenuBarElement"></div>
           <div class="editor-container__toolbar" ref="editorToolbarElement"></div>
@@ -17,8 +17,8 @@
             <div class="editor-container__editor-wrapper">
               <div class="editor-container__editor">
                 <div ref="editorElement">
-                  <ckeditor v-if="editor && config" :modelValue="config.initialData" :editor="editor" :config="config"
-                    @ready="onReady" />
+                  <ckeditor v-if="editor && config" :editor="editor" :config="config"
+                    @ready="onReady" v-model="data" @input="onEditorInput" />
                 </div>
               </div>
             </div>
@@ -26,130 +26,120 @@
               <div ref="editorMinimapElement"></div>
             </div>
           </div>
+          <div class="editor_container__word-count" ref="editorWordCountElement"></div>
         </div>
       </div>
-    </div>
-    <div class="right" v-show="true">
-      <input type="text">
-      <div class="frame">
-        <iframe style="width: 100%; height: 100%;" :src="aiIframeSrc[currentAiFrameIndex]"></iframe>
+      <div class="submitBtn">
+        <button @click="handleSubmit">提交</button>
       </div>
     </div>
   </div>
-
 </template>
 
 <script setup>
 import "./assets/style.css"
-import { Ckeditor, useCKEditorCloud } from '@ckeditor/ckeditor5-vue';
 import { computed, ref, onMounted, useTemplateRef } from 'vue';
+import { Ckeditor } from '@ckeditor/ckeditor5-vue';
 
-const aiIframeSrc = ref(["https://www.doubao.com/chat/807464071024642", "https://yiyan.baidu.com/"]);
-const isAiIframeShow = ref(false)
-const currentAiFrameIndex = ref(0)
+import {
+  DecoupledEditor,
+  Alignment,
+  Autoformat,
+  AutoImage,
+  AutoLink,
+  Autosave,
+  BlockQuote,
+  Bold,
+  Bookmark,
+  Code,
+  CodeBlock,
+  Emoji,
+  Essentials,
+  FindAndReplace,
+  FontBackgroundColor,
+  FontColor,
+  FontFamily,
+  FontSize,
+  GeneralHtmlSupport,
+  Heading,
+  HorizontalLine,
+  HtmlComment,
+  HtmlEmbed,
+  ImageBlock,
+  ImageCaption,
+  ImageEditing,
+  ImageInline,
+  ImageInsert,
+  ImageInsertViaUrl,
+  ImageResize,
+  ImageStyle,
+  ImageTextAlternative,
+  ImageToolbar,
+  ImageUpload,
+  ImageUtils,
+  Indent,
+  IndentBlock,
+  Italic,
+  Link,
+  LinkImage,
+  List,
+  ListProperties,
+  Markdown,
+  MediaEmbed,
+  Mention,
+  Minimap,
+  PageBreak,
+  Paragraph,
+  PasteFromMarkdownExperimental,
+  PasteFromOffice,
+  RemoveFormat,
+  ShowBlocks,
+  SimpleUploadAdapter,
+  SpecialCharacters,
+  SpecialCharactersArrows,
+  SpecialCharactersCurrency,
+  SpecialCharactersEssentials,
+  SpecialCharactersLatin,
+  SpecialCharactersMathematical,
+  SpecialCharactersText,
+  Strikethrough,
+  Style,
+  Subscript,
+  Superscript,
+  Table,
+  TableCaption,
+  TableCellProperties,
+  TableColumnResize,
+  TableProperties,
+  TableToolbar,
+  TextPartLanguage,
+  TextTransformation,
+  Title,
+  TodoList,
+  Underline,
+  WordCount
+} from 'ckeditor5';
+
+import translations from 'ckeditor5/translations/zh-cn.js';
+import 'ckeditor5/ckeditor5.css';
+import { postArticle } from "@/service/article";
+
 const LICENSE_KEY =
   'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NDA2MTQzOTksImp0aSI6ImJmMGI4MzQwLWEyNmUtNDI2Yi1iZjgwLTRlY2UzMGU4YjJiZiIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6IjA3M2E0ODMyIn0.09qvzuvOIxHfmwh6aEY8b3hPzj4mJW_qPL5yf6lu1Yzzex_WT7Gd9yBmf9J3V9Et7GxhtMv3NnUfzbckplsVuw';
 
 const editorToolbar = useTemplateRef('editorToolbarElement');
 const editorMenuBar = useTemplateRef('editorMenuBarElement');
 const editorMinimap = useTemplateRef('editorMinimapElement');
-
-const cloud = useCKEditorCloud({ version: '44.2.0', translations: ['zh-cn'] });
+const editorWordCount = useTemplateRef('editorWordCountElement');
 
 const isLayoutReady = ref(false);
 
-const editor = computed(() => {
-  if (!cloud.data.value) {
-    return null;
-  }
-
-  return cloud.data.value.CKEditor.DecoupledEditor;
-});
+const editor = DecoupledEditor;
 
 const config = computed(() => {
   if (!isLayoutReady.value) {
     return null;
   }
-
-  if (!cloud.data.value) {
-    return null;
-  }
-
-  const {
-    Alignment,
-    Autoformat,
-    AutoImage,
-    AutoLink,
-    Autosave,
-    BlockQuote,
-    Bold,
-    Bookmark,
-    Code,
-    CodeBlock,
-    Emoji,
-    Essentials,
-    FindAndReplace,
-    FontBackgroundColor,
-    FontColor,
-    FontFamily,
-    FontSize,
-    GeneralHtmlSupport,
-    Heading,
-    Highlight,
-    HorizontalLine,
-    HtmlComment,
-    HtmlEmbed,
-    ImageBlock,
-    ImageCaption,
-    ImageEditing,
-    ImageInline,
-    ImageInsert,
-    ImageInsertViaUrl,
-    ImageResize,
-    ImageStyle,
-    ImageTextAlternative,
-    ImageToolbar,
-    ImageUpload,
-    ImageUtils,
-    Indent,
-    IndentBlock,
-    Italic,
-    Link,
-    LinkImage,
-    List,
-    ListProperties,
-    Markdown,
-    MediaEmbed,
-    Mention,
-    Minimap,
-    PageBreak,
-    Paragraph,
-    PasteFromMarkdownExperimental,
-    PasteFromOffice,
-    RemoveFormat,
-    ShowBlocks,
-    SimpleUploadAdapter,
-    SpecialCharacters,
-    SpecialCharactersArrows,
-    SpecialCharactersCurrency,
-    SpecialCharactersEssentials,
-    SpecialCharactersLatin,
-    SpecialCharactersMathematical,
-    SpecialCharactersText,
-    Strikethrough,
-    Style,
-    Subscript,
-    Superscript,
-    Table,
-    TableCaption,
-    TableCellProperties,
-    TableColumnResize,
-    TableProperties,
-    TableToolbar,
-    TextTransformation,
-    TodoList,
-    Underline
-  } = cloud.data.value.CKEditor;
 
   return {
     toolbar: {
@@ -171,7 +161,6 @@ const config = computed(() => {
         'link',
         'insertImage',
         'insertTable',
-        'highlight',
         'blockQuote',
         'codeBlock',
         '|',
@@ -205,7 +194,6 @@ const config = computed(() => {
       FontSize,
       GeneralHtmlSupport,
       Heading,
-      Highlight,
       HorizontalLine,
       HtmlComment,
       HtmlEmbed,
@@ -256,9 +244,12 @@ const config = computed(() => {
       TableColumnResize,
       TableProperties,
       TableToolbar,
+      TextPartLanguage,
       TextTransformation,
+      Title,
       TodoList,
-      Underline
+      Underline,
+      WordCount
     ],
     fontFamily: {
       supportAllValues: true
@@ -340,7 +331,7 @@ const config = computed(() => {
     licenseKey: LICENSE_KEY,
     link: {
       addTargetToExternalLinks: true,
-      defaultProtocol: 'https://',
+      // defaultProtocol: 'https://',
       decorators: {
         toggleDownloadable: {
           mode: 'manual',
@@ -427,25 +418,34 @@ const config = computed(() => {
     },
     table: {
       contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
-    }
+    },
+    translations: [translations]
   };
 });
 
 onMounted(() => {
   isLayoutReady.value = true;
+});
 
-})
 function onReady(editor) {
-  if (editor.value !== null) {
-    [...editorToolbar.value.children].forEach(child => child.remove());
-    [...editorMenuBar.value.children].forEach(child => child.remove());
+  [...editorWordCount.value.children].forEach(child => child.remove());
+  [...editorToolbar.value.children].forEach(child => child.remove());
+  [...editorMenuBar.value.children].forEach(child => child.remove());
 
-    editorToolbar.value.appendChild(editor.ui.view.toolbar.element);
-    editorMenuBar.value.appendChild(editor.ui.view.menuBarView.element);
-  }
+  const wordCount = editor.plugins.get('WordCount');
+  editorWordCount.value.appendChild(wordCount.wordCountContainer);
+  editorToolbar.value.appendChild(editor.ui.view.toolbar.element);
+  editorMenuBar.value.appendChild(editor.ui.view.menuBarView.element);
 }
-const handleAIClick = () => {
-  isAiIframeShow.value = !isAiIframeShow.value
+onMounted(() => {
+  // new MyCustomPlugin(Ckeditor).init();
+});
+const data = ref('');
+const onEditorInput = (editorData) => {
+  console.log(data.value);
+};
+const handleSubmit = async () => {
+  await postArticle(data.value);
 };
 </script>
 
@@ -455,30 +455,15 @@ const handleAIClick = () => {
   display: flex;
   justify-content: center;
   font-family: "oppo-sans";
+  overflow: hidden;
 
   .middle {
     flex: 1;
   }
-
-  .right {
-    display: flex;
-    flex-direction: column;
-    // padding: 20px;
-    background-color: #999;
-    border-left: 1px solid #999;
-    width: 20%;
-    margin: 20px;
-    border-radius: 20px;
-
-    .frame {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-
-      iframe {
-        border: none;
-      }
-    }
+  .submitBtn{
+    position: absolute;
+    top: 0;
+    right: 0;
   }
 }
 </style>

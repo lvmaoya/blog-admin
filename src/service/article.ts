@@ -1,4 +1,4 @@
-import { post } from "./apiService";
+import { get, post } from "./apiService";
 
 export interface Category {
   id: string;
@@ -50,4 +50,11 @@ export interface BlogListSearchParams {
 
 export async function articleListData(data: BlogListSearchParams) {
   return await post<BlogListResponseData, BlogListSearchParams>("/blog/list", data);
+}
+
+export async function articleDetailData(id: string) {
+  return await get<BlogRecord>(`/blog/${id}`);
+}
+export async function postArticle(data: any) {
+  return await post<BlogRecord, BlogListSearchParams>("/blog", data);
 }
